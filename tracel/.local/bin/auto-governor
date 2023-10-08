@@ -1,0 +1,95 @@
+#! /bin/bash
+# 
+# Program to automatically set the cpu governer based on battery capacity.
+# If the battery is above 20%, it'll use the preferred governor (the governor the user wants)
+# If the battery is below 20% or equal, it'll use powersave
+# If the battery is being charged, it will use the preferred governor
+
+SERVICE_NAME="autogovernor"
+SYS_BAT="/sys/class/power_supply/BAT1/capacity"
+SYS_POW="/sys/class/power_supply/ACAD/online"
+CONFIG_FILE="/etc/tracel/auto-governor.json"
+
+die () {
+  echo "$@"
+  exit 1
+}
+
+log_info () {
+  echo "$@" | systemd-cat -t "$SERVICE_NAME" -p info
+}
+
+log_warning() {
+  echo "$@" | systemd-cat -t "$SERVICE_NAME" -p warning
+}
+
+get_battery() {
+  local bat_cap=$(cat "$SYS_BAT")
+  echo "$bat_cap"
+}
+
+is_charging() {
+  local online=$(cat "$SYS_POW")
+  if [[ "$online" -eq 1 ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+init_config() {
+  if [[ -z "$PREFERRED_GOVERNOR" ]]; then
+    PREFERRED_GOVERNOR="performance"
+  fi
+
+  if [[ -z "$POWERSAVE_CUTOFF" ]]; then
+    POWERSAVE_CUTOFF=20
+  fi
+
+  if [[ -z "$POLLING_DELAY" ]]; then
+    POLLING_DELAY=10
+  fi
+
+  log_info "Config init: POLLING_DELAY=$POLLING_DELAY; POWERSAVE_CUTOFF=$POWERSAVE_CUTOFF; PREFERRED_GOVERNOR=$PREFERRED_GOVERNOR"
+}
+
+set_governor() {
+  if [[ ! $(cpupower frequency-info -p | grep "$1") ]]; then
+    log_info "Setting CPU Governor to $1"
+    cpupower frequency-set -g "$1"
+  fi
+}
+
+main() {
+  init_config
+
+  while true; do
+    if is_charging; then
+      set_governor "$PREFERRED_GOVERNOR"
+    else
+      local bat=$(get_battery)
+
+      if [[ "$bat" -le "$POWERSAVE_CUTOFF" ]]; then
+        set_governor "powersave"
+      else
+        set_governor "$PREFERRED_GOVERNOR"
+      fi
+    fi
+
+    sleep "$POLLING_DELAY"
+  done
+}
+
+case $1 in
+  config_test)
+    init_config
+    echo "$POLLING_DELAY"
+    echo "$PREFERRED_GOVERNOR"
+    echo "$POWERSAVE_CUTOFF"
+    ;;
+  "")
+    main
+    ;;
+  *)
+    die "Invalid command!"
+esac

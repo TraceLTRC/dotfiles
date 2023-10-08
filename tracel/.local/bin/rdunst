@@ -1,0 +1,12 @@
+#! /usr/bin/bash
+
+killall dunst
+dunst &
+
+inotifywait -e close_write,moved_to,create -m "$HOME/.config/dunst/" |
+while read -r directory events filename; do
+    if [ "$filename" == "dunstrc" ]; then
+        killall dunst
+        dunst &
+    fi
+done

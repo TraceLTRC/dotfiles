@@ -1,0 +1,94 @@
+#! /bin/bash
+#
+# External monitor script
+
+display_modes=("NONE" "DUPE" "EXTEND")
+state_dir="$HOME/.local/state/tracel/"
+state_file="$state_dir/ext_monitor"
+intern_monitor="eDP-1"
+extern_monitor="HDMI-1"
+
+get_next_mode() {
+  for i in "${!display_modes[@]}"; do
+    if [[ "${display_modes[$i]}" == "$1" ]]; then
+      local next_index=$(($i + 1))
+
+      if [[ $next_index -ge ${#display_modes[@]} ]]; then
+        next_index=0
+      fi
+
+      echo "${display_modes[$next_index]}"
+    fi
+  done
+}
+
+apply_mode() {
+  if valid_extern; then
+    case "$1" in
+      NONE) 
+        xrandr --output "$extern_monitor" --off
+      ;;
+      DUPE) 
+        xrandr --output "$extern_monitor" --same-as "$intern_monitor"
+      ;;
+      EXTEND) 
+        xrandr --output "$extern_monitor" --left-of "$intern_monitor"
+      ;;
+    esac
+  fi
+}
+
+valid_extern() {
+  if xrandr | grep "$extern_monitor connected"; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+get_state() {
+  declare extern_mode
+
+  if [ -f "$state_file" ]; then
+    read -r extern_mode <"$state_file"
+  else
+    extern_mode="NONE"
+  fi
+
+  echo "$extern_mode"
+}
+
+save_state() {
+  if [ ! -d "$state_dir" ]; then
+      mkdir -p "$state_dir"
+  fi
+
+  echo "$1" > $state_file
+}
+
+extern_mode="$(get_state)"
+
+case $1 in
+  apply)
+    apply_mode "$extern_mode"
+    return 0
+    ;;
+  cycle)
+    extern_mode=$(get_next_mode "$extern_mode")
+    apply_mode "$extern_mode"
+    save_state "$extern_mode"
+    exit 0
+    ;;
+  test)
+    if valid_extern; then
+      echo "Valid!"
+    else
+      echo "Invalid!"
+    fi
+    exit 0
+    ;;
+  *)
+    echo "Invalid command!"
+    exit 1
+    ;;
+esac

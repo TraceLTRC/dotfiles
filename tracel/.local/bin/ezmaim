@@ -1,0 +1,6 @@
+#! /usr/bin/bash
+
+IMG_PATH="$HOME/Pictures/$(date +%H%M%S_%d-%m-%y).png"
+
+maim -s "$IMG_PATH"
+xclip -selection clipboard -t image/png -i "$IMG_PATH"
