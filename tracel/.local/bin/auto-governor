@@ -8,7 +8,7 @@
 SERVICE_NAME="autogovernor"
 SYS_BAT="/sys/class/power_supply/BAT1/capacity"
 SYS_POW="/sys/class/power_supply/ACAD/online"
-CONFIG_FILE="/etc/tracel/auto-governor.json"
+GOVERNOR_FILE="/home/$(logname)/.local/state/tracel/governor"
 
 die () {
   echo "$@"
@@ -28,6 +28,18 @@ get_battery() {
   echo "$bat_cap"
 }
 
+set_prefer_governor() {
+  echo "$1" > "$GOVERNOR_FILE"
+}
+
+get_governor() {
+  if [[ -e "$GOVERNOR_FILE" ]]; then
+    echo "$(cat $GOVERNOR_FILE)"
+  else
+    echo "performance"
+  fi
+}
+
 is_charging() {
   local online=$(cat "$SYS_POW")
   if [[ "$online" -eq 1 ]]; then
@@ -37,20 +49,10 @@ is_charging() {
   fi
 }
 
-init_config() {
-  if [[ -z "$PREFERRED_GOVERNOR" ]]; then
-    PREFERRED_GOVERNOR="performance"
-  fi
-
+init_cutoff() {
   if [[ -z "$POWERSAVE_CUTOFF" ]]; then
     POWERSAVE_CUTOFF=20
   fi
-
-  if [[ -z "$POLLING_DELAY" ]]; then
-    POLLING_DELAY=10
-  fi
-
-  log_info "Config init: POLLING_DELAY=$POLLING_DELAY; POWERSAVE_CUTOFF=$POWERSAVE_CUTOFF; PREFERRED_GOVERNOR=$PREFERRED_GOVERNOR"
 }
 
 set_governor() {
@@ -60,36 +62,32 @@ set_governor() {
   fi
 }
 
-main() {
-  init_config
+check_governor() {
+  init_cutoff
 
-  while true; do
-    if is_charging; then
-      set_governor "$PREFERRED_GOVERNOR"
+  local PREFERRED_GOVERNOR=$(get_governor)
+
+  if is_charging; then
+    set_governor "$PREFERRED_GOVERNOR"
+  else
+    local bat=$(get_battery)
+
+    if [[ "$bat" -le "$POWERSAVE_CUTOFF" ]]; then
+      set_governor "powersave"
     else
-      local bat=$(get_battery)
-
-      if [[ "$bat" -le "$POWERSAVE_CUTOFF" ]]; then
-        set_governor "powersave"
-      else
-        set_governor "$PREFERRED_GOVERNOR"
-      fi
+      set_governor "$PREFERRED_GOVERNOR"
     fi
-
-    sleep "$POLLING_DELAY"
-  done
+  fi
 }
 
 case $1 in
-  config_test)
-    init_config
-    echo "$POLLING_DELAY"
-    echo "$PREFERRED_GOVERNOR"
-    echo "$POWERSAVE_CUTOFF"
+  check)
+    check_governor
     ;;
-  "")
-    main
+  set)
+    set_prefer_governor "$2"
     ;;
   *)
     die "Invalid command!"
+    ;;
 esac

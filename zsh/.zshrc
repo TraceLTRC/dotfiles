@@ -91,6 +91,8 @@ source $ZSH/oh-my-zsh.sh
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
+export EDITOR='nvim'
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -110,23 +112,36 @@ alias pacup="sudo pacman -Syu"
 alias pacql="sudo pacman -Qs"
 alias pacqy="sudo pacman -Ss"
 
-# Yay aliases
-alias yayi="yay -S"
-alias yayr="yay -Rs"
-alias yayup="yay -Syu"
+# pikaur aliases
+alias piki="pikaur -S"
+alias pikr="pikaur -Rs"
+alias pikup="pikaur -Syu"
+
+alias fullup="pacup && yayup"
+
+# remove/trash aliases
+alias rm='rmtrash --forbid-root'
+alias rmdir='rmdirtrash --forbid-root'
+
+# zoxide
+alias cd='z'
 
 # Other aliases
 alias wifi="nmcli d wifi"
 alias vim="nvim"
+alias nano="nvim"
+alias sudo="sudo "
 
 # Path
 export PATH="$PATH:$HOME/.bun/bin:$HOME/.local/bin"
 
 # Wallpaper color
 if [[ "$VSCODE" != "1" ]]; then  
-  cat ~/.config/wal/sequences
+  cat ~/.local/share/sequences
 fi
 
 # Terminal binds
 bindkey "^[[1;3D" backward-word
 bindkey "^[[1;3C" forward-word
+source /usr/share/nvm/init-nvm.sh
+eval "$(zoxide init zsh)"

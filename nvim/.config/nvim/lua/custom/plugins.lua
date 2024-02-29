@@ -7,8 +7,25 @@ local plugins = {
     end
   },
   {
-    "folke/trouble.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" }
+    "nvim-tree/nvim-tree.lua",
+    opts = {
+      actions = {
+        open_file = {
+          quit_on_open = true
+        }
+      }
+    },
+  },
+  {
+    "kylechui/nvim-surround",
+    version = "*",
+    event = "VeryLazy",
+    config = function ()
+      require("nvim-surround").setup({
+
+      })
+    end
   }
 }
+
 return plugins

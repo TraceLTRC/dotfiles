@@ -1,0 +1,66 @@
+@import "shared/colors"
+
+window {
+  font: "Fantasque Sans Mono 12";
+  transparency: "real";
+  location: center;
+  padding: 1em;
+  border: 0.2em;
+  border-color: @active-background;
+  border-radius: 10;
+
+  background-color: @background;
+  /*background-image: url("/home/tracel/Downloads/oozora.jpg"); */
+  width: 30%;
+}
+
+inputbar {
+  padding: 0.1em;
+  border: 0px 0px 0.1em 0px;
+  border-color: @border-alt;
+  /*border-radius: 10; */
+  children: [ "entry" ];
+}
+
+/* prompt {
+  spacing: 0;
+  text-color: @foreground
+} */
+
+/* textbox-prompt-colon {
+  expand : false;
+  str: ":";
+} */
+
+entry {
+  text-color: @foreground;
+  spacing: 0;
+  placeholder-color: @inactive;
+  placeholder: "Search...";
+  margin: 0.325em;
+}
+
+listview {
+  margin: 0.8em 0px 0.8em;
+  lines: 10;
+  spacing: 0px;
+  scrollbar: false;
+  dynamic: false;
+}
+
+element-text {
+  background-color: @normal-background;
+  text-color: @normal-foreground;
+  padding: 0.35em 0.2em 0.35em;
+}
+
+element-text.alternate {
+  background-color: @background-alt;
+  text-color: @normal-foreground;
+}
+
+element-text.selected {
+  background-color: @selected-active-background;
+  text-color: @background;
+}
+

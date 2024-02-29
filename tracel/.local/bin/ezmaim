@@ -2,5 +2,5 @@
 
 IMG_PATH="$HOME/Pictures/$(date +%H%M%S_%d-%m-%y).png"
 
-maim -s "$IMG_PATH"
+maim -s "$IMG_PATH" -k
 xclip -selection clipboard -t image/png -i "$IMG_PATH"

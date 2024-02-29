@@ -1,0 +1,93 @@
+@import "shared/colors"
+
+configuration {
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+window {
+  font: "Fantasque Sans Mono 12";
+  transparency: "real";
+  location: center;
+  padding: 1em;
+  border: 0.2em;
+  border-color: @border-alt;
+  border-radius: 10;
+
+  background-color: @background;
+  width: 32%;
+}
+
+inputbar {
+  enabled: true;
+  fixed-columns: true;
+  children: ["textbox-prompt-colon", "prompt"];
+  spacing: 0.5em;
+}
+
+textbox-prompt-colon {
+  enabled: true;
+  background-color: @special-green;
+  content: "󰭖";
+  text-color: @background;
+  expand: false;
+  horizontal-align: 0.5;
+  vertical-align: 0.5;
+  padding: 0.5em;
+  border-radius: 360;
+  font: "Fantasque Sans Mono 16";
+}
+
+prompt {
+  font: "Fantasque Sans Mono 12";
+  enabled: true;
+  background-color: @special-blue;
+  text-color: @background;
+  padding: 0.5em 0.8em 0.5em;
+  border-radius: 16;
+  vertical-align: 0.5;
+  horizontal-align: 0.5;
+}
+
+message {
+  enabled: true;
+  padding: 0.5em;
+  children: ["textbox"];
+  expand: false;
+  background-color: @selected-active-background;
+}
+
+textbox {
+  enabled: true;
+  background-color: transparent;
+  text-color: @foreground;
+  expand: false;
+}
+
+listview {
+  lines: 1;
+  scrollbar: false;
+  flow: horizontal;
+  padding: 1em;
+  spacing: 1em;
+  dynamic: false;
+  columns: 4;
+}
+
+element-text {
+  font: "Fantasque Sans Mono 36";
+  vertical-align: 0.5;
+  horizontal-align: 0.5;
+  padding: 2em;
+  border-radius: 360;
+  background-color: @background-alt;
+  text-color: @normal-foreground;
+}
+
+element-text.selected {
+  background-color: @selected-active-background;
+  text-color: @background;
+}
