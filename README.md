@@ -1,3 +1,3 @@
 <p align="center">
-# TraceL's dotfiles
+TraceL's dotfiles
 </p>
