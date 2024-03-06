@@ -19,6 +19,7 @@ local servers = {
   "html",
   "tailwindcss",
   "clangd",
+  "volar"
 }
 
 setup(servers)
