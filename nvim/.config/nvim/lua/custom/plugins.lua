@@ -68,6 +68,15 @@ local plugins = {
 			},
 		},
 	},
+  {
+    "NvChad/nvim-colorizer.lua",
+    opts = {
+      user_default_options = {
+        rgb_fn = true,
+        hsl_fn = true,
+      }
+    }
+  }
 }
 
 return plugins
