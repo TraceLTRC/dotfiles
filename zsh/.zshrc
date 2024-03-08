@@ -131,6 +131,7 @@ alias wifi="nmcli d wifi"
 alias vim="nvim"
 alias nano="nvim"
 alias sudo="sudo "
+alias getwm="xprop | grep WM_CLASS | awk '{print $4}'"
 
 # Path
 export PATH="$PATH:$HOME/.bun/bin:$HOME/.local/bin"
