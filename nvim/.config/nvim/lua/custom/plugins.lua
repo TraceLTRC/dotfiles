@@ -71,6 +71,7 @@ local plugins = {
 				lua = { "stylua" },
 				python = { "isort", "black" },
 				javascript = { { "prettierd", "prettier" } },
+        typescript = { { "prettierd", "prettier" } },
 				vue = { "prettier" },
 				go = { "gofmt", "golines", "goimports" },
 				rust = { "rustfmt" },
