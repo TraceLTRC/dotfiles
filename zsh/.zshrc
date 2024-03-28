@@ -146,3 +146,7 @@ bindkey "^[[1;3D" backward-word
 bindkey "^[[1;3C" forward-word
 source /usr/share/nvm/init-nvm.sh
 eval "$(zoxide init zsh)"
+
+export EMSDK_QUIET=1
+
+source /home/tracel/Projects/emsdk/emsdk_env.sh
